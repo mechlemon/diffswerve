@@ -7,9 +7,17 @@
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
-
-
 // Custom definitions may go here
-
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+
+dependencies {
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-simple-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-zdense-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-fdense-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-experimental-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-dsparse-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-ddense-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-core-0.38.jar')
+    implementation files('/Users/chris/FTC/diffswerve/libs/ejml-cdense-0.38.jar')
+}

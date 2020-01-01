@@ -103,7 +103,7 @@ public class Calculate {
 //CONTROL THEORY
         public static class PIDF {
             //constants
-            double kP, kI, kD, kB, kF;
+            double kP, kI, kD, kF;
             double tolerance;
             double velTolerance;
 
@@ -115,11 +115,10 @@ public class Calculate {
             Boolean inVelTolerance = false;
 
 
-            public PIDF(double kP, double kI, double kD, double kB, double kF, double tolerance, double velTolerance){
+            public PIDF(double kP, double kI, double kD, double kF, double tolerance, double velTolerance){
                 this.kP = kP;
                 this.kI = kI;
                 this.kD = kD;
-                this.kB = kB;
                 this.kF = kF;
                 this.tolerance = tolerance;
                 this.velTolerance = velTolerance;
@@ -155,7 +154,7 @@ public class Calculate {
 
 
                 if(Math.signum(lastError) != Math.signum(error)){ //"bounces" back after reaching target, braking
-                    I = -kB * I;
+                    I = 0;
                 }
 
                 P = kP * error;
@@ -200,11 +199,10 @@ public class Calculate {
                 F=0;
             }
 
-            public void setConstants(double kP, double kI, double kD, double kB, double kF, double tolerance, double velTolerance){
+            public void setConstants(double kP, double kI, double kD, double kF, double tolerance, double velTolerance){
                 this.kP = kP;
                 this.kI = kI;
                 this.kD = kD;
-                this.kB = kB;
                 this.kF = kF;
                 this.tolerance = tolerance;
                 this.velTolerance = velTolerance;
