@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.ejml.simple.SimpleMatrix;
 
 
-@TeleOp(name = "SwerveTest2", group = "test")
+@TeleOp(name = "EJML", group = "test")
 
 public class EJMLVelo extends OpMode {
 

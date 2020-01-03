@@ -330,6 +330,95 @@ public class Calculate {
     }
 
 
+    public static class Vector2D{
+        public double x;
+        public double y;
+
+        public enum Type{
+            CARTESIAN, POLAR
+        }
+
+        public Vector2D(double magnitudeOrX, double directionOrY, Type vectorType){
+            if(vectorType == Type.CARTESIAN){
+                x = magnitudeOrX;
+                y = directionOrY;
+            }else{
+                x = magnitudeOrX * Math.cos(directionOrY);
+                y = magnitudeOrX * Math.sin(directionOrY);
+            }
+        }
+
+
+
+        //unit vector
+        public Vector2D(double direction){
+            x = Math.cos(direction);
+            y = Math.sin(direction);
+        }
+
+        //zero vector
+        public Vector2D(){
+            x = 0;
+            y = 0;
+        }
+
+        public Vector2D add(Vector2D valueToAdd){
+            return new Vector2D(this.x + valueToAdd.x,
+                    this.y + valueToAdd.y,
+                    Type.CARTESIAN);
+        }
+
+        public Vector2D subtract(Vector2D valueToSubtract){
+            return new Vector2D(this.x + valueToSubtract.x,
+                    this.y + valueToSubtract.y,
+                    Type.CARTESIAN);
+        }
+
+        public double dotProduct(Vector2D f){
+            return this.x * f.x + this.y * f.y;
+        }
+
+        public Vector2D scalarAdd(double scalar){
+            return new Vector2D(this.x + scalar,
+                    this.y + scalar,
+                    Type.CARTESIAN);
+        }
+
+        public Vector2D scalarMult(double scalar){
+            return new Vector2D(this.x * scalar,
+                    this.y * scalar,
+                    Type.CARTESIAN);
+        }
+
+        public Vector2D scalarDiv(double scalar){
+            return new Vector2D(this.x / (double) scalar,
+                    this.y / (double) scalar,
+                    Type.CARTESIAN);
+        }
+
+        public Vector2D rotate(double radiansToRotate){
+            double sin = Math.sin(radiansToRotate);
+            double cos = Math.cos(radiansToRotate);
+            return new Vector2D(x*cos - y*sin,
+                    x*sin + y*cos,
+                    Type.CARTESIAN);
+        }
+
+        public double getMagnitude(){
+            return Math.sqrt(x*x + y*y);
+        }
+
+        public double getAngle(){
+            return Math.atan2(y, x);
+        }
+
+        public String toString() {
+            return "(" + (x) + ", " + (y) + ")";
+        }
+
+    }
+
+
 
 
 }
