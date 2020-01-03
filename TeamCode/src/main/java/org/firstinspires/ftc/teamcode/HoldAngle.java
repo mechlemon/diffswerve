@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "HoldAngle", group = "test")
 
 public class HoldAngle extends OpMode {
 
-    private DcMotor leftTop = null;
+    private DcMotorEx leftTop = null;
     private DcMotor leftBottom = null;
     private DcMotor rightTop = null;
     private DcMotor rightBottom = null;
@@ -30,7 +32,7 @@ public class HoldAngle extends OpMode {
 
     @Override
     public void init() {
-        leftTop = hardwareMap.get(DcMotor.class, "2-0");
+        leftTop = hardwareMap.get(DcMotorEx.class, "2-0");
         leftTop.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftBottom = hardwareMap.get(DcMotor.class, "2-1");

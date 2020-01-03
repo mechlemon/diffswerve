@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -24,7 +25,8 @@ public class IMU {
 
 
     //how the IMU outputs data
-    private Orientation angles;
+    public Orientation angles;
+    public AngularVelocity angVelos;
 
 
     //the imu sensor belonging to this class:
@@ -66,8 +68,20 @@ public class IMU {
         return 0;
     }
 
+    public double getAngVelo() {
+        angVelos = imu.getAngularVelocity();
+        if(headingAxis == HeadingAxis.ROLL) return Calculate.normalizeAngle(angVelos.xRotationRate - headingAngleOffset);
+        if(headingAxis == HeadingAxis.PITCH) return Calculate.normalizeAngle(angVelos.zRotationRate - headingAngleOffset);
+        if(headingAxis == HeadingAxis.YAW) return Calculate.normalizeAngle(angVelos.yRotationRate - headingAngleOffset);
+        return 0;
+    }
+
     public Orientation getOrientation(){
         return angles;
+    }
+
+    public AngularVelocity getAngVelos(){
+        return angVelos;
     }
 
     public HeadingAxis getHeadingAxis(){
@@ -76,12 +90,6 @@ public class IMU {
 
     public void setHeadingAxis(IMU.HeadingAxis newHeadingAxis){
         headingAxis = newHeadingAxis;
-    }
-
-
-    public double getNormalizedHeading() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return Calculate.normalizeAngle(angles.firstAngle - headingAngleOffset);
     }
 
 

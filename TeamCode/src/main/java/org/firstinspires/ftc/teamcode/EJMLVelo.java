@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.ejml.simple.SimpleMatrix;
 
@@ -20,6 +21,9 @@ public class EJMLVelo extends OpMode {
     DcMotor rightEncoder = null;
 
     double gearRatio = 1024;
+
+
+
 
     @Override
     public void init() {
@@ -56,6 +60,8 @@ public class EJMLVelo extends OpMode {
 
         runMotorsAtVelo(top, bottom, top, bottom);
 
+
+
         telemetry.addData( "forward", forward);
         telemetry.addData( "moduleRot", moduleRot);
         telemetry.addData( "RMotorAngle", determineAngle(rightTop.getCurrentPosition(), rightBottom.getCurrentPosition()));
@@ -78,6 +84,18 @@ public class EJMLVelo extends OpMode {
         leftBottom.setPower(LB);
         rightTop.setPower(RT);
         rightBottom.setPower(RB);
+    }
+
+    // Computes the current battery voltage
+    double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
     }
 
 
