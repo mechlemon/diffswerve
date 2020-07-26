@@ -20,20 +20,17 @@ public class SwerveTest2 extends OpMode {
 
     @Override
     public void init() {
-        leftTop = hardwareMap.get(DcMotor.class, "2-0");
+        leftTop = hardwareMap.get(DcMotor.class, "1-0");
         leftTop.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftBottom = hardwareMap.get(DcMotor.class, "2-1");
+        leftBottom = hardwareMap.get(DcMotor.class, "1-1");
         leftBottom.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        rightTop = hardwareMap.get(DcMotor.class, "2-2");
+        rightTop = hardwareMap.get(DcMotor.class, "1-2");
         rightTop.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        rightBottom = hardwareMap.get(DcMotor.class, "2-3");
+        rightBottom = hardwareMap.get(DcMotor.class, "1-3");
         rightBottom.setDirection(DcMotorSimple.Direction.FORWARD);
-
-
-        rightEncoder = hardwareMap.get(DcMotor.class, "1-0");
 
 
     }

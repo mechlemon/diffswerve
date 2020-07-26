@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,7 +20,7 @@ public class Tuner{
     private ButtonPress rightBumper = new ButtonPress();
 
 
-    Tuner(String[] titles, double[] values, Gamepad gamepad, Telemetry telemetry){
+    public Tuner(String[] titles, double[] values, Gamepad gamepad, Telemetry telemetry){
         this.titles = titles;
         this.values = values;
         this.gamepad = gamepad;

@@ -7,8 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D;
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D.Type;
+import org.firstinspires.ftc.teamcode.lib.Calculate.Vector2D;
+import org.firstinspires.ftc.teamcode.lib.IMU;
+import org.firstinspires.ftc.teamcode.lib.Calculate.Vector2D.Type;
 
 
 @TeleOp(name = "Teleop2", group = "teleop")
@@ -29,16 +30,16 @@ public class Teleop2 extends OpMode {
 
     @Override
     public void init() {
-        leftTop = hardwareMap.get(DcMotorEx.class, "2-0");
+        leftTop = hardwareMap.get(DcMotorEx.class, "1-0");
         leftTop.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftBottom = hardwareMap.get(DcMotorEx.class, "2-1");
+        leftBottom = hardwareMap.get(DcMotorEx.class, "1-1");
         leftBottom.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        rightTop = hardwareMap.get(DcMotorEx.class, "2-2");
+        rightTop = hardwareMap.get(DcMotorEx.class, "1-2");
         rightTop.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        rightBottom = hardwareMap.get(DcMotorEx.class, "2-3");
+        rightBottom = hardwareMap.get(DcMotorEx.class, "1-3");
         rightBottom.setDirection(DcMotorSimple.Direction.FORWARD);
 
         imu = new IMU(hardwareMap.get(BNO055IMU.class,"imu"));

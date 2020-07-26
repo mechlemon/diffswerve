@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D;
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D.Type;
+import org.firstinspires.ftc.teamcode.lib.Calculate.Vector2D;
 import org.firstinspires.ftc.teamcode.ModuleController.ModuleState;
 
 
@@ -32,12 +31,12 @@ public class RobotController {
         Vector2D targetLeftVelo = new Vector2D(
             modifiedTargetState.linVelo.x - angVelo * HALF_DIST_BETWEEN_WHEELS,
             modifiedTargetState.linVelo.y, 
-            Type.CARTESIAN);
+            Vector2D.Type.CARTESIAN);
 
         Vector2D targetRightVelo = new Vector2D(
             modifiedTargetState.linVelo.x + angVelo * HALF_DIST_BETWEEN_WHEELS,
-            modifiedTargetState.linVelo.y, 
-            Type.CARTESIAN);
+            modifiedTargetState.linVelo.y,
+            Vector2D.Type.CARTESIAN);
 
         leftTargetModuleState = new ModuleState(targetLeftVelo.getAngle(), 0, 0, targetLeftVelo.getMagnitude());
         rightTargetModuleState = new ModuleState(targetRightVelo.getAngle(), 0, 0, targetRightVelo.getMagnitude());

@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.ejml.simple.SimpleMatrix;
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D;
-import org.firstinspires.ftc.teamcode.Calculate.Vector2D.Type;
-import org.firstinspires.ftc.teamcode.Calculate.PIDF;
+
+import org.firstinspires.ftc.teamcode.lib.*;
+import org.firstinspires.ftc.teamcode.lib.Calculate.*;
+
+
 
 
 public class ModuleController{
@@ -42,7 +44,7 @@ public class ModuleController{
         if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
         
         double rotPower = anglePIDF.loop(state.moduleAngle, modifiedTargetState.moduleAngle);
-        if(anglePIDF.inTolerance) rotPower = 0;
+        if(anglePIDF.inTolerance()) rotPower = 0;
         double forwardPower = forwardPIDF.loop(state.wheelAngVelo, modifiedTargetState.wheelAngVelo);
 
         double maxPower = Math.abs(rotPower) + Math.abs(forwardPower);
@@ -84,7 +86,7 @@ public class ModuleController{
 
         double dt = (System.nanoTime() - lastTime) * 1e-9;
         lastTime = System.nanoTime();
-        Vector2D ds = new Vector2D(state.wheelAngVelo * WHEEL_RADIUS, state.moduleAngle, Type.POLAR).scalarMult(dt);
+        Vector2D ds = new Vector2D(state.wheelAngVelo * WHEEL_RADIUS, state.moduleAngle, Vector2D.Type.POLAR).scalarMult(dt);
         odometer = odometer.add(ds);
     }
 
