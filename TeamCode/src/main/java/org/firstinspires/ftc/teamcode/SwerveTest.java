@@ -46,7 +46,6 @@ public class SwerveTest extends OpMode {
         telemetry.addData("LB", leftBottom.getCurrentPosition());
         telemetry.addData("RT", rightTop.getCurrentPosition());
         telemetry.addData("RB", rightBottom.getCurrentPosition());
-        telemetry.addData("RE", rightEncoder.getCurrentPosition());
         telemetry.addData( "RMotorAngle", determineAngle(rightTop.getCurrentPosition(), rightBottom.getCurrentPosition()));
         telemetry.addData( "LMotorAngle", determineAngle(leftTop.getCurrentPosition(), leftBottom.getCurrentPosition()));
         telemetry.update();

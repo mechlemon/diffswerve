@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.controllers;
 
 import org.ejml.simple.SimpleMatrix;
 
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.lib.*;
 import org.firstinspires.ftc.teamcode.lib.Calculate.*;
 
@@ -10,48 +11,73 @@ import org.firstinspires.ftc.teamcode.lib.Calculate.*;
 
 public class ModuleController{
 
-    public ModuleState state;
-    public ModuleState modifiedTargetState;
-    public boolean reversed;
+    public ModuleState state = new ModuleState(0, 0, 0, 0);
+    public ModuleState modifiedTargetState = new ModuleState(0, 0, 0, 0);
+    public boolean reversed = false;
 
-    public ModulePowers modulePowers;
+    public boolean stop = false;
+
+    public ModulePowers modulePowers = new ModulePowers(0, 0);
 
     public Vector2D odometer = new Vector2D();
 
+    SimpleMatrix u;
 
-    final double WHEEL_RADIUS = 0.03175;
-    final double TICKS_PER_REV = 103.6;
-    final double RINGS_GEAR_RATIO = 9.88;
-    final double WHEEL_GEAR_RATIO = 0.168;
-
-
-
-    private PIDF anglePIDF = new PIDF(0.5, 0, 0, 0, 0, 0);
-    private PIDF forwardPIDF = new PIDF(0.01, 0, 0, 0, 0, 0);
+    private PIDF anglePIDF = new PIDF(1, 0.05, 0, 0.0, 0.5, 0);
+    private PIDF forwardPIDF = new PIDF(0.1, 0.005, 0, 0.02, 0, 0);
 
     private SimpleMatrix K = new SimpleMatrix(new double[][] { //from matlab calcs
-        { 22.36,    0,    0,    8.06},
-        { 22.36,    0,    0,    -8.06}
+            { 22.36,    0,    0,    8.06},
+            { 22.36,    0,    0,    -8.06}
     });
 
     public ModuleController(ModuleState initialState){
         state = initialState;
     }
 
+    public void stop(boolean stopOrNot){
+        stop = stopOrNot;
+    }
+
     public ModulePowers move(ModuleState targetState){
+        if(stop){
+            return new ModulePowers(0, 0);
+        }else{
+            modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
+            modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
+            if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
+
+            double rotPower = anglePIDF.loop(state.moduleAngle, modifiedTargetState.moduleAngle);
+            double forwardPower = forwardPIDF.loop(state.wheelAngVelo, modifiedTargetState.wheelAngVelo);
+
+
+            if(!anglePIDF.inTolerance()) forwardPower  = 0;
+            // double forwardPower = modifiedTargetState.wheelAngVelo*0.25;
+
+
+            double topPower = rotPower + forwardPower;
+            double bottomPower = rotPower - forwardPower;
+
+            if(topPower > 1 || bottomPower > 1){
+                double maxPower = Math.abs(rotPower) + Math.abs(forwardPower);
+                topPower /= maxPower;
+                bottomPower /= maxPower;
+            }
+
+            modulePowers = new ModulePowers(topPower, bottomPower);
+            return modulePowers;
+        }
+    }
+
+    public ModulePowers moveStateSpace(ModuleState targetState){
         modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
         modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
         if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
-        
-        double rotPower = anglePIDF.loop(state.moduleAngle, modifiedTargetState.moduleAngle);
-        if(anglePIDF.inTolerance()) rotPower = 0;
-        double forwardPower = forwardPIDF.loop(state.wheelAngVelo, modifiedTargetState.wheelAngVelo);
-
-        double maxPower = Math.abs(rotPower) + Math.abs(forwardPower);
-
-        double topPower = (rotPower + forwardPower) / maxPower;
-        double bottomPower = (rotPower - forwardPower) / maxPower;
-        modulePowers = new ModulePowers(topPower, bottomPower);
+        u = state.getState().minus(modifiedTargetState.getState());
+        SimpleMatrix negKu = K.mult(u).negative();
+        double topVoltage = negKu.get(0, 0);
+        double bottomVoltage = negKu.get(1, 0);
+        modulePowers = new ModulePowers(topVoltage/12.0, bottomVoltage/12.0);
         return modulePowers;
     }
 
@@ -72,7 +98,7 @@ public class ModuleController{
         }
 
         double difference2Pi = (closestAngle - targetAngle) % (2 * Math.PI);
-        reversed = Math.abs(difference2Pi) > (Math.PI / 2.0); //if the difference is closer to 180, reverse direction 
+        reversed = Math.abs(difference2Pi) > (Math.PI / 2.0); //if the difference is closer to 180, reverse direction
 
         return closestAngle;
     }
@@ -86,24 +112,24 @@ public class ModuleController{
 
         double dt = (System.nanoTime() - lastTime) * 1e-9;
         lastTime = System.nanoTime();
-        Vector2D ds = new Vector2D(state.wheelAngVelo * WHEEL_RADIUS, state.moduleAngle, Vector2D.Type.POLAR).scalarMult(dt);
+        Vector2D ds = new Vector2D(state.wheelAngVelo * Constants.WHEEL_RADIUS, state.moduleAngle, Vector2D.Type.POLAR).scalarMult(dt);
         odometer = odometer.add(ds);
     }
 
 
     private double calcWheelAngle(double motorTop, double motorBottom){
         double avgMotorTicks = (motorTop - motorBottom) / 2.0; //wheel rotation is difference in motors / 2
-        double avgMotorRevs = avgMotorTicks / TICKS_PER_REV; //convert encoder ticks to revolutions
-        double wheelAngleRevs = avgMotorRevs / (RINGS_GEAR_RATIO * WHEEL_GEAR_RATIO); //wheel angle, in revolutions
-        double wheelAngleRad = wheelAngleRevs * 2 * Math.PI; //convert revolutions to radians
-        return wheelAngleRad;
+        double avgMotorRevs = avgMotorTicks / Constants.TICKS_PER_REV; //convert encoder ticks to revolutions
+        double moduleAngleRevs = avgMotorRevs / (Constants.WHEEL_GEAR_RATIO * Constants.RINGS_GEAR_RATIO); //wheel angle, in revolutions
+        double moduleAngleDeg = moduleAngleRevs * 2 * Math.PI; //convert revolutions to radians
+        return moduleAngleDeg;
     }
     private double calcModuleAngle(double motorTop, double motorBottom){
         double avgMotorTicks = (motorTop + motorBottom) / 2.0; //module rotation is the average of the motors
-        double avgMotorRevs = avgMotorTicks / TICKS_PER_REV; //convert encoder ticks to revolutions
-        double moduleAngleRevs = avgMotorRevs / RINGS_GEAR_RATIO; //module angle, in revolutions
-        double moduleAngleRad = moduleAngleRevs * 2 * Math.PI; //convert revolutions to radians
-        return moduleAngleRad;
+        double avgMotorRevs = avgMotorTicks / Constants.TICKS_PER_REV; //convert encoder ticks to revolutions
+        double moduleAngleRevs = avgMotorRevs / Constants.RINGS_GEAR_RATIO; //module angle, in revolutions
+        double moduleAngleDeg = moduleAngleRevs * 2 * Math.PI; //convert revolutions to radians
+        return moduleAngleDeg;
     }
 
 
@@ -129,19 +155,12 @@ public class ModuleController{
             this.wheelAngVelo = wheelAngVelo;
         }
 
-        public ModuleState(){
-            this.moduleAngle = 0;
-            this.moduleAngVelo = 0;
-            this.wheelAngle = 0;
-            this.wheelAngVelo = 0;
-        }
-
         public SimpleMatrix getState(){
             return new SimpleMatrix(new double[][]{
-                {moduleAngle},
-                {moduleAngVelo},
-                {wheelAngle},
-                {wheelAngVelo}
+                    {moduleAngle},
+                    {moduleAngVelo},
+                    {wheelAngle},
+                    {wheelAngVelo}
             });
         }
 

@@ -10,11 +10,6 @@ import org.firstinspires.ftc.teamcode.lib.*;
 
 
 
-//HELPER CLASS
-//this class makes it more convienient to use the IMU. Before running the OpMode, call IMU.initialize.
-//At the beginning of the OpMode, call resetHeading. Whenever you need the heading, call getHeading.
-
-
 @TeleOp(name = "IMUtest", group = "IMUtest")
 
 public class IMUtest extends OpMode {
