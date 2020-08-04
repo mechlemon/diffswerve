@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.controllers.RobotController;
 import org.firstinspires.ftc.teamcode.controllers.RobotController.RobotPowers;
 import org.firstinspires.ftc.teamcode.lib.Calculate.Vector2D;
 import org.firstinspires.ftc.teamcode.lib.IMU;
+import org.firstinspires.ftc.teamcode.lib.Tuner;
 
 
 @TeleOp(name = "UserCode", group = "teleop")
@@ -29,6 +30,10 @@ public class UserCode extends OpMode {
     Vector2D targetLinVelo = new Vector2D();
     double targetAngVelo = 0;
 
+    Tuner tuner;
+    String[] titles = new String[] {"scale"};
+    double[] values = new double[] {0.5};
+
     @Override
     public void init(){
         leftTop = hardwareMap.get(DcMotorEx.class, "1-0");
@@ -43,6 +48,8 @@ public class UserCode extends OpMode {
         imu = new IMU(hardwareMap.get(BNO055IMU.class,"imu"));
         imu.setHeadingAxis(IMU.HeadingAxis.YAW);
         imu.initialize();
+
+        tuner = new Tuner(titles, values, gamepad1, telemetry);
     }
 
 
@@ -63,8 +70,9 @@ public class UserCode extends OpMode {
             rightBottom.getVelocity()
         );
 
+        tuner.tune();
 
-        joystick = joystick.scalarMult(3).rotate(-imu.getHeading());
+        joystick = joystick.scalarMult(tuner.get("scale")).rotate(-imu.getHeading());
 
         targetLinVelo = joystick.add(controller.robotState.linVelo);
         // targetAngVelo = -Controls.rawZ * 3;
@@ -82,10 +90,24 @@ public class UserCode extends OpMode {
             0.0
         );
 
-        telemetry.addData("heading", imu.getHeading());
+//        setDrivePowersAndFeed(
+//                gamepad1.left_stick_x,
+//                gamepad1.left_stick_y,
+//                gamepad1.right_stick_x,
+//                gamepad1.right_stick_y,
+//                0.0
+//        );
 
-        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
-        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
+//        telemetry.addData("heading", imu.getHeading());
+
+//        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
+//        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
+//
+//        telemetry.addData("LT power", robotPowers.leftTopPower);
+//        telemetry.addData("LB power", robotPowers.leftBottomPower);
+//        telemetry.addData("RT power", robotPowers.rightTopPower);
+//        telemetry.addData("RB power", robotPowers.rightBottomPower);
+
     }
 
     private void setDrivePowersAndFeed(double LT, double LB, double RT, double RB, double feedforward){

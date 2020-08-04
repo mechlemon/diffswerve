@@ -24,20 +24,22 @@ public class RobotController {
         this.robotState = robotState;
     }
 
+    public double deadband = 0.05;
+
     public RobotPowers move(RobotState targetRobotState){
 
         double targetLeftModuleAngle = 0;
         double targetRightModuleAngle = 0;
 
         double targetTangentialSpeed = targetRobotState.linVelo.getMagnitude(); //of the center of the robot
-        if(Math.abs(targetRobotState.angVelo) < 0.1 && targetRobotState.linVelo.getMagnitude() < 0.1){
+        if(Math.abs(targetRobotState.angVelo) < deadband && targetRobotState.linVelo.getMagnitude() < deadband){
             targetLeftModuleAngle = leftController.state.moduleAngle;
             targetRightModuleAngle = rightController.state.moduleAngle;
             targetLeftWheelSpeed = 0;
             targetRightWheelSpeed = 0;
             stop(true);
             robotState.mode = "stop";
-        }else if(Math.abs(targetRobotState.angVelo) < 0.1){  //going straight deadband
+        }else if(Math.abs(targetRobotState.angVelo) < deadband){  //going straight deadband
             stop(false);
             targetLeftModuleAngle = targetRobotState.linVelo.getAngle();
             targetRightModuleAngle = targetRobotState.linVelo.getAngle();
@@ -45,7 +47,7 @@ public class RobotController {
             targetLeftWheelSpeed = targetRobotState.linVelo.getMagnitude();
             targetRightWheelSpeed = targetRobotState.linVelo.getMagnitude();
             robotState.mode = "straight";
-        }else if(targetRobotState.linVelo.getMagnitude() < 0.1){
+        }else if(targetRobotState.linVelo.getMagnitude() < deadband){
             stop(false);
             targetLeftModuleAngle = 0;
             targetRightModuleAngle = 0;

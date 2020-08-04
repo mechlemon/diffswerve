@@ -20,7 +20,7 @@ public class HoldAngle extends OpMode {
 
     private DcMotor rightOdometryEncoder = null;
 
-    private double gearRatio = 1024;
+    private double gearRatio = 1250;
 
     private double targetAngle;
 
@@ -58,15 +58,9 @@ public class HoldAngle extends OpMode {
 
         double x = gamepad1.right_stick_x;
         double y = -gamepad1.right_stick_y;
-
-        double forward = -gamepad1.left_stick_y;
-
-        if(Math.sqrt(x*x + y*y) > 0.9){
-            targetAngle = Math.toDegrees(Math.atan2(y, x)) - 90;
-            rotateModules(targetAngle);
-        }else{
-            runMotorsAtVelo(forward, -forward, forward, -forward);
-        }
+        
+        targetAngle = Math.toDegrees(Math.atan2(y, x)) - 90;
+        rotateModules(targetAngle);
 
         telemetry.addData( "targetAngle", targetAngle);
         telemetry.addData( "RMotorAngle", determineAngle(rightTop.getCurrentPosition(), rightBottom.getCurrentPosition()));
