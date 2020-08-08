@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.controllers.RobotController.RobotState;
 import org.firstinspires.ftc.teamcode.controllers.RobotController;
 import org.firstinspires.ftc.teamcode.controllers.RobotController.RobotPowers;
+import org.firstinspires.ftc.teamcode.controllers.RobotController.RobotState;
 import org.firstinspires.ftc.teamcode.lib.Calculate.Vector2D;
 import org.firstinspires.ftc.teamcode.lib.IMU;
 import org.firstinspires.ftc.teamcode.lib.Tuner;
 
 
-@TeleOp(name = "UserCode", group = "teleop")
+@TeleOp(name = "MotorTest", group = "teleop")
 
-public class UserCode extends OpMode {
+public class MotorTest extends OpMode {
 
     DcMotorEx leftTop, leftBottom, rightTop, rightBottom;
     IMU imu;
@@ -56,7 +56,6 @@ public class UserCode extends OpMode {
 
     @Override
     public void loop(){
-        joystick = new Vector2D(-gamepad1.left_stick_y, gamepad1.left_stick_x, Vector2D.Type.CARTESIAN);
 
         controller.updateState(
             imu.getAngVelo(),
@@ -70,48 +69,19 @@ public class UserCode extends OpMode {
             rightBottom.getVelocity()
         );
 
-        tuner.tune();
-
-        joystick = joystick.scalarMult(tuner.get("scale")).rotate(Math.toRadians(imu.getHeading()));
-//        joystick = joystick.scalarMult(tuner.get("scale"));
-
-//        targetLinVelo = joystick.add(controller.robotState.linVelo);
-        targetLinVelo = joystick;
-        // targetAngVelo = -Controls.rawZ * 3;
-        targetAngVelo = 0;
-
-        targetRobotState = new RobotState(targetLinVelo, targetAngVelo);
-
-        telemetry.addData("targetLinVelo", targetLinVelo);
-
-
-        RobotPowers robotPowers = controller.move(targetRobotState);
 
         setDrivePowersAndFeed(
-            robotPowers.leftTopPower,
-            robotPowers.leftBottomPower,
-            robotPowers.rightTopPower,
-            robotPowers.rightBottomPower,
-            0.0
+                gamepad1.left_stick_x,
+                gamepad1.left_stick_y,
+                gamepad1.right_stick_x,
+                gamepad1.right_stick_y,
+                0.0
         );
 
-//        setDrivePowersAndFeed(
-//                gamepad1.left_stick_x,
-//                gamepad1.left_stick_y,
-//                gamepad1.right_stick_x,
-//                gamepad1.right_stick_y,
-//                0.0
-//        );
+        telemetry.addData("heading", imu.getHeading());
 
-//        telemetry.addData("heading", imu.getHeading());
-
-//        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
-//        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
-//
-//        telemetry.addData("LT power", robotPowers.leftTopPower);
-//        telemetry.addData("LB power", robotPowers.leftBottomPower);
-//        telemetry.addData("RT power", robotPowers.rightTopPower);
-//        telemetry.addData("RB power", robotPowers.rightBottomPower);
+        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
+        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
 
     }
 

@@ -21,15 +21,8 @@ public class ModuleController{
 
     public Vector2D odometer = new Vector2D();
 
-    SimpleMatrix u;
-
-    private PIDF anglePIDF = new PIDF(0.4, 0.0, 0.05, 0.0, 0.5, 0);
-    private PIDF forwardPIDF = new PIDF(0, 0.0, 0, 0, 0, 0);
-
-    private SimpleMatrix K = new SimpleMatrix(new double[][] { //from matlab calcs
-            { 22.36,    0,    0,    8.06},
-            { 22.36,    0,    0,    -8.06}
-    });
+    private PIDF anglePIDF = new PIDF(0.3, 0.0, 0.0, 0.0, 0.5, 0);
+    private PIDF forwardPIDF = new PIDF(0.1, 0.0, 0, 0, 0, 0);
 
     public ModuleController(ModuleState initialState){
         state = initialState;
@@ -67,18 +60,6 @@ public class ModuleController{
             modulePowers = new ModulePowers(topPower, bottomPower);
             return modulePowers;
         }
-    }
-
-    public ModulePowers moveStateSpace(ModuleState targetState){
-        modifiedTargetState = targetState.copy(); //modify to find optimal angle with same results
-        modifiedTargetState.moduleAngle = calcClosestModuleAngle(state.moduleAngle, targetState.moduleAngle);
-        if(reversed) modifiedTargetState.wheelAngVelo = -targetState.wheelAngVelo;
-        u = state.getState().minus(modifiedTargetState.getState());
-        SimpleMatrix negKu = K.mult(u).negative();
-        double topVoltage = negKu.get(0, 0);
-        double bottomVoltage = negKu.get(1, 0);
-        modulePowers = new ModulePowers(topVoltage/12.0, bottomVoltage/12.0);
-        return modulePowers;
     }
 
     public double rotateModule(double targetModuleAngle){
