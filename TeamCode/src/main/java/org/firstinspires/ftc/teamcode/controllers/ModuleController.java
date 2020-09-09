@@ -21,7 +21,7 @@ public class ModuleController{
 
     public Vector2D odometer = new Vector2D();
 
-    private PIDF anglePIDF = new PIDF(0.3, 0.0, 0.0, 0.0, 0.5, 0);
+    private PIDF anglePIDF = new PIDF(0.2, 0.0, 0.0, 0.0, 0.5, 0);
     private PIDF forwardPIDF = new PIDF(0.1, 0.0, 0, 0, 0, 0);
 
     public ModuleController(ModuleState initialState){
@@ -44,7 +44,7 @@ public class ModuleController{
             double forwardPower = forwardPIDF.loop(state.wheelAngVelo, modifiedTargetState.wheelAngVelo);
 
 
-            if(!anglePIDF.inTolerance()) forwardPower  = 0;
+//            if(!anglePIDF.inTolerance()) forwardPower  = 0;
             // double forwardPower = modifiedTargetState.wheelAngVelo*0.25;
 
 

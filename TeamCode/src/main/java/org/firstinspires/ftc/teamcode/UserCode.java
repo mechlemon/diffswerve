@@ -105,8 +105,10 @@ public class UserCode extends OpMode {
 
 //        telemetry.addData("heading", imu.getHeading());
 
-//        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
-//        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
+        telemetry.addData("leftAngle", controller.leftController.state.moduleAngle);
+        telemetry.addData("rightAngle", controller.rightController.state.moduleAngle);
+        telemetry.addData("left inv", controller.leftController.reversed);
+        telemetry.addData("right inv", controller.rightController.reversed);
 //
 //        telemetry.addData("LT power", robotPowers.leftTopPower);
 //        telemetry.addData("LB power", robotPowers.leftBottomPower);
